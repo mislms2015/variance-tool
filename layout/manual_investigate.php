@@ -132,6 +132,7 @@ include_once '../config/conn.php';
                                 data-cls-selected-item-remover="bg-darkTeal fg-white">
                             <option value="">Select Proper Tagging</option>
                             <option value="Elp_Successful" data-template="<span class='mif-verified icon'></span> $1">ELP Successful</option>
+                            <option value="Gcash Transaction" data-template="<span class='mif-discover icon'></span> $1">Gcash Transaction</option>
                             <option value="Failed - For Refund" data-template="<span class='mif-money icon'></span> $1">Failed - For Refund</option>
                             <option value="Not Subject for refund" data-template="<span class='mif-uninstall icon'></span> $1">Not Subject for refund</option>
                         </select>

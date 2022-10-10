@@ -1,1 +1,0 @@
-Storage for validated file
