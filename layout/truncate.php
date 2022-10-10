@@ -67,14 +67,14 @@ $table_list = array('file_uploaded', 'raw_gigalife', 'raw_gigalife_formatted', '
                     }
 
                     if (count($table_list) == $count) {
-                        $files_gigalife = glob('../storage/gigalife/*'); // get all file names
+                        $files_gigalife = glob('../storage/gigalife/*.xlsx'); // get all file names
                         foreach($files_gigalife as $file) { // iterate files
                             if(is_file($file)) {
                                 unlink($file); // delete file
                             }
                         }
 
-                        $files_gigalife_validated = glob('../storage/gigalife-validated/*'); // get all file names
+                        $files_gigalife_validated = glob('../storage/gigalife-validated/*.xlsx'); // get all file names
                         foreach($files_gigalife_validated as $file) { // iterate files
                             if(is_file($file)) {
                                 unlink($file); // delete file

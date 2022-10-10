@@ -1,0 +1,1 @@
+Storage for gigalife summary raw format.
