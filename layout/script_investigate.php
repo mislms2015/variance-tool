@@ -114,7 +114,11 @@ foreach($mrns_final as $mrn):
             $tagging = getTag($gigapay_status, $splunk_state);
 
             if ($number_rows > 1) {
-                if (trim($mrn[2] == trim($splunk_gateway))) {
+                //validate here if more than 1 return, check if splunk gateway is match
+                if (trim($mrn[2]) == trim($splunk_gateway)) {
+                    array_push($mrns_update_final, array($mrn[0], $tagging));
+                } else {
+                    // if not get the prope response
                     array_push($mrns_update_final, array($mrn[0], $tagging));
                 }
             } else if ($number_rows == 1) {
@@ -145,12 +149,12 @@ foreach($mrns_final as $mrn):
                 $splunk_res = mysqli_fetch_object($query_splunk);
                 $splunk_res_state = $splunk_res->state;
 
-                echo "<pre>";
-                print_R($mrns_update_final);
-                echo "</pre>";
-                echo "<br /><br /><br />";
-                echo $splunk_state;
-                die;
+                // echo "<pre>";
+                // print_R($mrns_update_final);
+                // echo "</pre>";
+                // echo "<br /><br /><br />";
+                // echo $splunk_state;
+                // die;
 
                 $tagging = getTag($gigapay_res_status, $splunk_res_state);
                 array_push($mrns_update_final, array($mrn[0], $tagging));
