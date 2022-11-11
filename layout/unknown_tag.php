@@ -35,7 +35,9 @@ function runToast(msg, indicator) {
                     </thead>
                     <tbody>
                     <?php
-                    $query = "SELECT * FROM raw_gigalife_formatted WHERE tagging = '---'";
+                    $tags = "'Gcash Transaction', 'For escalation to L3', 'Elp_Successful', 'Failed - For Refund', 'Not Subject for refund', 'Email to NOC'";
+                    //$query = "SELECT * FROM raw_gigalife_formatted WHERE tagging = '---'";
+                    $query = "SELECT * FROM raw_gigalife_formatted WHERE remarks <> '' AND tagging NOT IN ($tags) OR tagging = '---'";
                     $res = mysqli_query($conn, $query);
                     while ($row = mysqli_fetch_object($res)) {
                     ?>
