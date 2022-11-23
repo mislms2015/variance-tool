@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2022 at 01:54 AM
+-- Generation Time: Oct 03, 2022 at 01:22 AM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 7.4.19
 
@@ -78,10 +78,10 @@ CREATE TABLE `raw_gigalife` (
 
 CREATE TABLE `raw_gigalife_formatted` (
   `id` int(11) NOT NULL,
-  `mrns` varchar(255) NOT NULL,
-  `gateway_reference_no` varchar(255) NOT NULL,
-  `remarks` varchar(255) NOT NULL,
-  `tagging` varchar(255) NOT NULL
+  `mrns` text NOT NULL,
+  `gateway_reference_no` text NOT NULL,
+  `remarks` text NOT NULL,
+  `tagging` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -104,7 +104,7 @@ CREATE TABLE `raw_logs_elp` (
   `retailer_new_balance` text NOT NULL,
   `response_code` text NOT NULL,
   `response_description` text NOT NULL,
-  `transaction_request_reference_number` varchar(255) NOT NULL,
+  `transaction_request_reference_number` text NOT NULL,
   `transaction_timestamp` text NOT NULL,
   `body` longtext NOT NULL,
   `created_at` varchar(50) NOT NULL,
@@ -127,13 +127,13 @@ CREATE TABLE `raw_logs_gigapay` (
   `brand` longtext NOT NULL,
   `transaction_date` varchar(45) NOT NULL,
   `transaction_type` longtext NOT NULL,
-  `payment_method` varchar(255) NOT NULL,
+  `payment_method` longtext NOT NULL,
   `currency` varchar(25) NOT NULL,
   `amount` varchar(45) NOT NULL,
   `keyword` longtext NOT NULL,
   `action` longtext NOT NULL,
   `payment_reference_number` longtext NOT NULL,
-  `app_transaction_number` varchar(255) NOT NULL,
+  `app_transaction_number` longtext NOT NULL,
   `comment` longtext NOT NULL,
   `is_payment_status_updated` varchar(15) NOT NULL,
   `authentication_status_origin` longtext NOT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE `raw_logs_gigapay` (
   `last_four` longtext NOT NULL,
   `first_six` longtext NOT NULL,
   `card_type` longtext NOT NULL,
-  `elp_transaction_number` varchar(255) NOT NULL,
+  `elp_transaction_number` longtext NOT NULL,
   `elp_corporation_id` longtext NOT NULL,
   `elp_branch_id` longtext NOT NULL,
   `elp_request_reference_number` longtext NOT NULL,
@@ -176,7 +176,7 @@ CREATE TABLE `raw_logs_splunk` (
   `_time` text NOT NULL,
   `file_id` text NOT NULL,
   `processor_ref_no` text NOT NULL,
-  `app_transaction_number` varchar(255) NOT NULL,
+  `app_transaction_number` text NOT NULL,
   `state` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -194,26 +194,7 @@ ALTER TABLE `file_uploaded`
 -- Indexes for table `raw_gigalife_formatted`
 --
 ALTER TABLE `raw_gigalife_formatted`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `remarks_tagging_idx` (`mrns`,`remarks`,`tagging`);
-
---
--- Indexes for table `raw_logs_elp`
---
-ALTER TABLE `raw_logs_elp`
-  ADD KEY `trrn_idx` (`transaction_request_reference_number`);
-
---
--- Indexes for table `raw_logs_gigapay`
---
-ALTER TABLE `raw_logs_gigapay`
-  ADD KEY `app_elp_idx` (`payment_method`,`elp_transaction_number`,`app_transaction_number`);
-
---
--- Indexes for table `raw_logs_splunk`
---
-ALTER TABLE `raw_logs_splunk`
-  ADD KEY `app_trans_idx` (`app_transaction_number`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables

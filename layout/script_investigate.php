@@ -141,6 +141,7 @@ foreach($mrns_final as $mrn):
             $gigapay_res_status = $gigapay_res->status;
             $gigapay_payment_method = $gigapay_res->payment_method;
             $gigapay_payment_reference_number = $gigapay_res->payment_reference_number;
+            //add paymaya_checkout_id here for || validation except payment_reference_number
             $gigapay_app_transaction_number = $gigapay_res->app_transaction_number;
 
             //check if gcash
