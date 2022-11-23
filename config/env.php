@@ -10,6 +10,6 @@
  */
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "admin";
 $database = "db_variance";
 ?>
