@@ -12,8 +12,8 @@ function runToast(msg, indicator) {
 <title>Variance Investigation Tool</title>
 
     <div class="container-fluid start-screen h-100" id="mainContainer">
-        <h1 class="start-screen-title">Variance Investigation</h1>
-
+        <h1 class="start-screen-title">Variance Investigation <i style="font-size: 22px;">v2.2.0</i></h1>
+        
         <span class="mif-spinner ani-spin mif-5x fg-teal" id="spinner"></span>
 
         <div class="tiles-area clear">
