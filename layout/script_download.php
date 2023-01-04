@@ -17,7 +17,15 @@ $query_gigalife_formatted = mysqli_query($conn, "SELECT * FROM raw_gigalife_form
 
 $z = 3;
 while ($res_formmatted = mysqli_fetch_object($query_gigalife_formatted)) {
-    $excel2->getActiveSheet()->setCellValue('Z'.$z, $res_formmatted->tagging);
+    $tag = $res_formmatted->tagging;
+    $remarks = $res_formmatted->remarks;
+    if ($remarks != '' && $tag == '') {
+        $new_tag = 'Investigate Manually';        
+    } else {
+        $new_tag = $tag;
+    }
+    //$excel2->getActiveSheet()->setCellValue('Z'.$z, $res_formmatted->tagging);
+    $excel2->getActiveSheet()->setCellValue('Z'.$z, $new_tag);
     $z++;
 }
 

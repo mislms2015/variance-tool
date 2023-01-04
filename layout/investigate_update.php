@@ -7,7 +7,7 @@ $mrn_update = array();
 $mrns_update_final = array();
 
 ####tagging all the gcash transaction
-$investigate = mysqli_query($conn, "SELECT * FROM raw_gigalife_formatted WHERE remarks <> '' AND tagging = ''");
+/*$investigate = mysqli_query($conn, "SELECT * FROM raw_gigalife_formatted WHERE remarks <> '' AND tagging = ''");
 
 while ($row = mysqli_fetch_object($investigate)) {
     array_push($mrns, array($row->id, $row->mrns));
@@ -25,10 +25,6 @@ raw_logs_gigapay
     elp_transaction_number = ?)");
 $stmt->bind_param('sss', $payment, $mrn_app, $mrn_elp);
 
-$query = "UPDATE raw_gigalife_formatted SET tagging = ? WHERE id = ?";
-$stmt_update = $conn2->prepare($query);
-$stmt_update->bind_param("si", $mrn_tag, $mrn_id);
-
 foreach($mrns as $mrn):
     $payment = 'GCASH';
     $mrn_app = $mrn[1];
@@ -38,20 +34,12 @@ foreach($mrns as $mrn):
     $stmt->bind_result($col1, $col2, $col3, $col4);
 
     while ($stmt->fetch()) {
-        //array_push($mrn_update, array($col4, $mrn[0]));
-        $tag = $col4;
-        $id = $mrn[0];
-        
-        $conn2->query("START TRANSACTION");
-        $mrn_tag = $tag;
-        $mrn_id = $id;
-        $stmt_update->execute();
+        array_push($mrn_update, array($col4, $mrn[0]));
     }
     
 endforeach;
 
-
-/*$query = "UPDATE raw_gigalife_formatted SET tagging = ? WHERE id = ?";
+$query = "UPDATE raw_gigalife_formatted SET tagging = ? WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("si", $mrn_tag, $mrn_id);
 
@@ -60,14 +48,10 @@ foreach ($mrn_update as $res) {
     $mrn_tag = $res[0];
     $mrn_id = $res[1];
     $stmt->execute();
-}*/
+}
 $stmt->close();
 $conn->query("COMMIT");
-$stmt_update->close();
-$conn2->query("COMMIT");
-
-//------------------------------------------------------------------------------------------------------
-
+*/
 
 ####tagging the official investigation
 $investigate_final = mysqli_query($conn, "SELECT * FROM raw_gigalife_formatted WHERE remarks <> '' AND tagging = ''");
@@ -81,7 +65,6 @@ $stmt = $conn->prepare("SELECT
 raw_logs_gigapay.status AS 'Gigapay Status',
 raw_logs_gigapay.app_transaction_number AS 'Gigapay App Transaction Number',
 raw_logs_gigapay.elp_transaction_number AS 'Gigapay ELP Transaction Number',
-raw_logs_gigapay.paymaya_checkout_id AS 'Gigapay Paymaya Checkout ID',
 raw_logs_elp.type AS 'ELP Type',
 raw_logs_elp.response_description AS 'ELP Response Description',
 raw_logs_splunk.app_transaction_number AS 'Splunk App Transaction Number',
@@ -117,25 +100,6 @@ function getTag($giga_status, $splunk_state) {
     return $tagging;
 }
 
-function updateRealtime($conn2, $final_id, $final_tag) {
-    $query_final = "UPDATE raw_gigalife_formatted SET tagging = ? WHERE id = ?";
-    $stmt_final = $conn2->prepare($query_final);
-    $stmt_final->bind_param("si", $mrn_tag_final, $mrn_id_final);
-    
-    $conn2->query("START TRANSACTION");
-    $mrn_id_final = $final_id;
-    $mrn_tag_final = $final_tag;
-    $stmt_final->execute();
-    $stmt_final->close();
-    $conn2->query("COMMIT");
-    // foreach ($mrns_update_final as $res_final) {
-    //     $mrn_id_final = $res_final[0];
-    //     $mrn_tag_final = $res_final[1];
-    //     $stmt_final->execute();
-    // }
-}
-
-
 foreach($mrns_final as $mrn):
     $mrn_app_final = $mrn[1];
     $mrn_elp_final = $mrn[1];
@@ -144,22 +108,18 @@ foreach($mrns_final as $mrn):
     $stmt->store_result();
     $number_rows = $stmt->num_rows;
 
-    $stmt->bind_result($gigapay_status, $gigapay_app_trans, $gigapay_elp_trans, $gigapay_paymaya_checkout_id, $elp_type, $elp_response_desc, $splunk_app_trans, $splunk_gateway, $splunk_state);
+    $stmt->bind_result($gigapay_status, $gigapay_app_trans, $gigapay_elp_trans, $elp_type, $elp_response_desc, $splunk_app_trans, $splunk_gateway, $splunk_state);
 
     if ($number_rows > 0) {
         while ($stmt->fetch()) {
-
-            // echo 'ID: ' .$mrn[0]. ' ' .$mrn[2]. '<br />';
-            // echo 'ID: ' .$mrn[0]. ' ' .$gigapay_paymaya_checkout_id. '<br />';
-            // echo 'ID: ' .$mrn[0]. ' ' .$splunk_gateway. '<br /><br />';
             
             $tagging = getTag($gigapay_status, $splunk_state);
 
             if ($number_rows > 1) {
                 //validate here if more than 1 return, check if splunk gateway is match
-                if (trim($mrn[2]) == trim($splunk_gateway) || trim($gigapay_paymaya_checkout_id) == trim($splunk_gateway)) {
+                if (trim($mrn[2]) == trim($splunk_gateway)) {
                     //array_push($mrns_update_final, array($mrn[0], $tagging));
-                    updateRealtime($conn2, $mrn[0], $tagging);
+                    update_formatted($mrn[0], $tagging);
                 } 
                 // issue raise here when multiple splunk, override to last response of tagging
                 // } else {
@@ -168,7 +128,7 @@ foreach($mrns_final as $mrn):
                 // }
             } else if ($number_rows == 1) {
                     //array_push($mrns_update_final, array($mrn[0], $tagging));
-                    updateRealtime($conn2, $mrn[0], $tagging);
+                    update_formatted($mrn[0], $tagging);
             }
         }
     } else {
@@ -179,7 +139,7 @@ foreach($mrns_final as $mrn):
             $elp_min = $elp_res->number;
             $elp_updated_at = $elp_res->updated_at;
 
-            $query_gigapay = mysqli_query($conn, "SELECT * FROM raw_logs_gigapay WHERE number = '$elp_min' ORDER BY ABS(TIMESTAMPDIFF(SECOND, transaction_date, '$elp_updated_at')) LIMIT 1");
+            $query_gigapay = mysqli_query($conn, "SELECT * FROM raw_logs_gigapay WHERE number = '$elp_min' ORDER BY ABS(TIMESTAMPDIFF(SECOND, updated_at, '$elp_updated_at')) LIMIT 1");
             $gigapay_res = mysqli_fetch_object($query_gigapay);
             $gigapay_res_status = $gigapay_res->status;
             $gigapay_payment_method = $gigapay_res->payment_method;
@@ -190,34 +150,31 @@ foreach($mrns_final as $mrn):
             //check if gcash
             if ($gigapay_payment_method == 'GCASH') {
                 //array_push($mrns_update_final, array($mrn[0], 'Gcash Transaction'));
-                updateRealtime($conn2, $mrn[0], 'Gcash Transaction');
+                update_formatted($mrn[0], 'Gcash Transaction');
             } else {
                 //check proper tagging
                 $query_splunk = mysqli_query($conn, "SELECT * FROM raw_logs_splunk WHERE app_transaction_number = '$gigapay_payment_reference_number' OR app_transaction_number = '$gigapay_app_transaction_number' LIMIT 1");
                 $splunk_res = mysqli_fetch_object($query_splunk);
-                //$splunk_res_state = $splunk_res->state;
-                if (isset($splunk_res->state)) {
-                    $splunk_res_state = $splunk_res->state;
-                } else {
-                    $splunk_res_state = '';
-                }
+                $splunk_res_state = $splunk_res->state;
 
-                $tagging = getTag($gigapay_res_status, $splunk_res_state);
+                //$tagging = getTag($gigapay_res_status, $splunk_res_state);
                 //array_push($mrns_update_final, array($mrn[0], $tagging));
-                updateRealtime($conn2, $mrn[0], $tagging);
+                update_formatted($mrn[0], getTag($gigapay_res_status, $splunk_res_state));
             }
         } else {
             //array_push($mrns_update_final, array($mrn[0], 'For escalation to L3'));
-            updateRealtime($conn2, $mrn[0], 'For escalation to L3');
+            update_formatted($mrn[0], 'For escalation to L3');
         }
     }
 endforeach;
 
 
-
+function update_formatted($id, $tagging) {
+    mysqli_query($conn, "UPDATE raw_gigalife_formatted SET tagging = '$tagging' WHERE id = $id ");
+}
 
 /*$query_final = "UPDATE raw_gigalife_formatted SET tagging = ? WHERE id = ?";
-$stmt_final = $conn2->prepare($query_final);
+$stmt_final = $conn->prepare($query_final);
 $stmt_final->bind_param("si", $mrn_tag_final, $mrn_id_final);
 
 $conn->query("START TRANSACTION");
@@ -225,11 +182,9 @@ foreach ($mrns_update_final as $res_final) {
     $mrn_id_final = $res_final[0];
     $mrn_tag_final = $res_final[1];
     $stmt_final->execute();
-}*/
-$stmt->close();
-$conn->query("COMMIT");
-
-
+}
+$stmt_final->close();
+$conn->query("COMMIT");*/
 
 echo 'success';
 ?>

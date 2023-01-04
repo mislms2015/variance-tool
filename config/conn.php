@@ -5,6 +5,7 @@ date_default_timezone_set('Asia/Manila');
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
+$conn2 = new mysqli($servername, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {

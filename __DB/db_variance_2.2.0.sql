@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2023 at 06:17 PM
+-- Generation Time: Nov 23, 2022 at 01:54 AM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 7.4.19
 
@@ -195,10 +195,7 @@ ALTER TABLE `file_uploaded`
 --
 ALTER TABLE `raw_gigalife_formatted`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `formatted_mrns` (`mrns`),
-  ADD KEY `formatted_gateway` (`gateway_reference_no`),
-  ADD KEY `formatted_remarks` (`remarks`),
-  ADD KEY `formatted_tagging` (`tagging`);
+  ADD KEY `remarks_tagging_idx` (`mrns`,`remarks`,`tagging`);
 
 --
 -- Indexes for table `raw_logs_elp`
@@ -210,9 +207,7 @@ ALTER TABLE `raw_logs_elp`
 -- Indexes for table `raw_logs_gigapay`
 --
 ALTER TABLE `raw_logs_gigapay`
-  ADD KEY `gigapay_payment_method` (`payment_method`),
-  ADD KEY `gigapay_elp_trans` (`elp_transaction_number`),
-  ADD KEY `gigapay_app_trans` (`app_transaction_number`);
+  ADD KEY `app_elp_idx` (`payment_method`,`elp_transaction_number`,`app_transaction_number`);
 
 --
 -- Indexes for table `raw_logs_splunk`

@@ -12,7 +12,7 @@ function runToast(msg, indicator) {
 <title>Variance Investigation Tool</title>
 
     <div class="container-fluid start-screen h-100" id="mainContainer">
-        <h1 class="start-screen-title">Variance Investigation <i style="font-size: 22px;">v2.2.0</i></h1>
+        <h1 class="start-screen-title">Variance Investigation <i style="font-size: 22px;">v2.2.5</i></h1>
         
         <span class="mif-spinner ani-spin mif-5x fg-teal" id="spinner"></span>
 
@@ -137,6 +137,9 @@ function runToast(msg, indicator) {
                 </a>
                 <a href="./layout/truncate.php" data-role="tile" data-size="small" class="bg-black">
                     <img src="./images/truncate.png" class="icon" <?=popOver('Truncate Tables')?>>
+                </a>
+                <a href="./layout/update.php" data-role="tile" data-size="small" class="bg-white">
+                    <img src="./images/update.png" class="icon" <?=popOver('Patch Update')?>>
                 </a>
             </div>
             <!-- DATABASE SETTINGS: END -->

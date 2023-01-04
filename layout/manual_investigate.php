@@ -54,6 +54,8 @@ include_once '../config/conn.php';
                         <th>MRN / RN</th>
                         <th>Gigapay Status</th>
                         <th>Gigapay App Transaction Number</th>
+                        <th>Gigapay Paymaya Checkout ID</th>
+                        <th>Payment Method</th>
                         <th>Gigapay ELP Transaction Number</th>
                         <th>ELP Type</th>
                         <th>ELP Response Description</th>
@@ -66,7 +68,9 @@ include_once '../config/conn.php';
                     <?php
                     $mrn = $_GET['mrn'];
                     $query = "SELECT
+                    raw_logs_gigapay.payment_method AS 'payment_method',
                     raw_logs_gigapay.status AS 'gigapay_status',
+                    raw_logs_gigapay.paymaya_checkout_id AS 'gigapay_paymaya_checkout_id',
                     raw_logs_gigapay.app_transaction_number AS 'gigapay_app_transaction_numberr',
                     raw_logs_gigapay.elp_transaction_number AS 'gigapay_elp_transaction_number',
                     raw_logs_gigapay.created_at AS 'gigapay_created_at',
@@ -101,6 +105,8 @@ include_once '../config/conn.php';
                             <i><?=$row->gigapay_updated_at?></i>
                         </td>
                         <td><b><?=$row->gigapay_app_transaction_numberr?></b></td>
+                        <td><b><?=$row->gigapay_paymaya_checkout_id?></b></td>
+                        <td><b><?=$row->payment_method?></b></td>
                         <td><b><?=$row->gigapay_elp_transaction_number?></b></td>
                         <td><b><?=$row->elp_type?></b></td>
                         <td>
